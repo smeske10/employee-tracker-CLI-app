@@ -1,0 +1,12 @@
+INSERT INTO employee (id, first_name, last_name, role_id, manager_id)
+VALUES  (1, 'John', 'Smith', 2),
+        (2, 'Bill', 'Burr', 1, 1),
+        (3, 'Tom', 'Segura', 1, 1),
+        (4, 'Bert', 'Kreischer', 7),
+        (5, 'Kat', 'Williams', 8, 4),
+        (6, 'Ryan', 'Dunn', 9, 7),
+        (7, 'Jonny', 'Knoxville', 10),
+        (8, 'Dan Gross', 3),
+        (9, 'Pete', 'Rezanka' 4, 8),
+        (10, 'Dwayne', 'Johnson', 5),
+        (11, 'Kevin', 'Hart', 6, 10),
