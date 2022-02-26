@@ -429,7 +429,7 @@ function deleteDepartment() {
   }
   deletedDepartment()
     .then((data) => {
-      sql.query(`INSERT INTO department(department) VALUES("${data.deptName}")`, (err, results) => { console.log("Department Added") })
+      sql.query(`DROP IF EXISTS department(department) VALUES("${data.deptName}")`, (err, results) => { console.log("Department Added") })
     })
     .then((data) => {
       sql.query(`SELECT *FROM department`, (err, results) => { console.log(consoleTable.getTable(results)) })
