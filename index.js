@@ -38,13 +38,13 @@ function inquire() {
       }]).then(function (res) {
         switch (res.select) {
           case "View all Departments":
-            viewDepartments();
+            return viewDepartments();
 
           case "View all Roles":
-            viewRoles();
+            return viewRoles();
 
-          // case "View all Employees":
-          //   viewEmployees();
+          case "View all Employees":
+            return viewEmployees();
 
           // case "View Employees by Manager":
           //   viewEmployeesByManager();
@@ -101,7 +101,7 @@ function anotherQuery() {
         case "Yes":
           inquire();
         case "No":
-          return process.exit()
+          process.exit()
       }
     })
 }
@@ -111,7 +111,7 @@ function viewDepartments() {
     sql.query("SELECT * FROM department;", (err, results) => { console.log(consoleTable.getTable(results)) });
     setTimeout(() => {
       anotherQuery();
-    }, 100)
+    }, 1000)
   }
   showDepartment();
 }
@@ -119,12 +119,23 @@ function viewDepartments() {
 
 function viewRoles() {
   const showRole = () => {
-    sql.query("SELECT id, title, salary, department_id FROM roles INNER JOIN department ON roles.department_id = department.id;",
+    sql.query("SELECT id, title, salary, department_id FROM roles;",
      (err, results) => { console.log(consoleTable.getTable(results)) });
     setTimeout(() => {
       anotherQuery();
-    }, 100);
+    }, 1000);
   }
   showRole()
+}
+
+function viewEmployees() {
+  const showEmployees = () => {
+    sql.query("SELECT id, first_name, last_name, role_id, manager_id FROM employee;",
+     (err, results) => { console.log(consoleTable.getTable(results)) });
+    setTimeout(() => {
+      anotherQuery();
+    }, 1000);
+  }
+  showEmployees()
 }
 
