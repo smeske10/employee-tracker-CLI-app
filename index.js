@@ -1,7 +1,19 @@
 const inquirer = require('inquirer')
+const mysql = require('mysql2')
+const consoleTable = require('console.table')
+require('dotenv').config();
 
-function inquire () {
-    inquirer
+const sql = mysql.createConnection(
+  {
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_NAME,
+  }
+)
+
+function inquire() {
+  inquirer
     .prompt([
       {
         type: 'list',
@@ -27,65 +39,53 @@ function inquire () {
         switch (res.select) {
           case "View all Departments":
             viewDepartments();
-            anotherQuery();
-  
-          case "View all Roles":
-            viewRoles();
-            anotherQuery();
-  
-          case "View all Employees":
-            viewEmployees();
-            anotherQuery();
-          
-          case "View Employees by Manager":
-            viewEmployeesByManager();
-            anotherQuery();
-  
-          case "View Employees by Department":
-            viewEmployeesByDepartment();
-            anotherQuery();
-  
-          case "Add Department":
-            addDepartment();
-            anotherQuery();
-  
-          case  "Add Role":
-            addRole();
-            anotherQuery();
-  
-          case "Add Employee":
-            addEmployee();
-            anotherQuery();
-  
-          case "Update Employee Role":
-            updateEmployeeRole();
-            anotherQuery();
-  
-          case "Update Employee Manager":
-            updateEmployeeManager();
-            anotherQuery();
-  
-          case "Delete Department":
-            deleteDepartment();
-            anotherQuery();
-  
-          case "Delete Role":
-            deleteRole();
-            anotherQuery();
-  
-          case "Delete Employee":
-            deleteEmployee();
-            anotherQuery();
-  
-          case "View Total Utilized Budget of Department":
-            viewBudget();
-            anotherQuery();
+
+          // case "View all Roles":
+          //   viewRoles();
+
+          // case "View all Employees":
+          //   viewEmployees();
+
+          // case "View Employees by Manager":
+          //   viewEmployeesByManager();
+
+          // case "View Employees by Department":
+          //   viewEmployeesByDepartment();
+
+          // case "Add Department":
+          //   addDepartment();
+
+          // case "Add Role":
+          //   addRole();
+
+          // case "Add Employee":
+          //   addEmployee();
+
+          // case "Update Employee Role":
+          //   updateEmployeeRole();
+
+          // case "Update Employee Manager":
+          //   updateEmployeeManager();
+
+          // case "Delete Department":
+          //   deleteDepartment();
+
+          // case "Delete Role":
+          //   deleteRole();
+
+          // case "Delete Employee":
+          //   deleteEmployee();
+
+          // case "View Total Utilized Budget of Department":
+          //   viewBudget();
         }
       })
-  };
-  
-  function anotherQuery(){
-    inquirer
+};
+
+inquire();
+
+function anotherQuery() {
+  inquirer
     .prompt([
       {
         type: "list",
@@ -95,15 +95,23 @@ function inquire () {
           'Yes',
           'No'
         ]
-      }.then(function (res) {
-        if (res.anotherQuery === 'Yes') {
-          inquire();
-        } else if (res.anotherQuery === 'No') {
-          break;
-        } else {
-          return 'Please select a valid response'
-        }
       }
-      )
-    ])
+    ]).then(function (res) {
+      switch (res.select) {
+        case "Yes":
+          inquire();
+        case "No":
+          return process.exit()
+      }
+    })
+}
+
+function viewDepartments() {
+  const showDepartment = () => {
+    sql.query("SELECT * FROM department;", (err, results) => { console.log(consoleTable.getTable(results)) });
+    setTimeout(() => {
+      anotherQuery();
+    }, 100)
   }
+  showDepartment();
+}
