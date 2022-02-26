@@ -40,8 +40,8 @@ function inquire() {
           case "View all Departments":
             viewDepartments();
 
-          // case "View all Roles":
-          //   viewRoles();
+          case "View all Roles":
+            viewRoles();
 
           // case "View all Employees":
           //   viewEmployees();
@@ -115,3 +115,16 @@ function viewDepartments() {
   }
   showDepartment();
 }
+
+
+function viewRoles() {
+  const showRole = () => {
+    sql.query("SELECT id, title, salary, department_id FROM roles INNER JOIN department ON roles.department_id = department.id;",
+     (err, results) => { console.log(consoleTable.getTable(results)) });
+    setTimeout(() => {
+      anotherQuery();
+    }, 100);
+  }
+  showRole()
+}
+
