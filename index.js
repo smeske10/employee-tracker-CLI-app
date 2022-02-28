@@ -211,7 +211,7 @@ function addRole() {
       {
         type: "list",
         name: "deptChoice",
-        message: "Please select of the following:",
+        message: "Please select the Department to add this role to:",
         choices: addedRoles
       }
     ])
@@ -219,7 +219,7 @@ function addRole() {
   newRole()
     .then((data) => {
       sql.query(`INSERT INTO roles(title, salary, department_id) VALUES("${(data.roleName)}","${data.salary}","${data.deptChoice}")`, (err, results) => {
-        if (err) { throw err }
+        if (err) { return err }
       })
     })
     .then((data) => {
@@ -236,7 +236,7 @@ function addEmployee() {
   let addedEmployees = []
   sql.query("select * from employees", (err, results) => {
     if (err) { console.log(err) }
-    addedEmployee(results)
+    addedEmployee(res)
   })
   function addedEmployee(value) {
     for (let l = 0; l < value.length; l++) {
@@ -247,11 +247,11 @@ function addEmployee() {
     }
   }
 
-  let Role = []
-  sql.query("select * from roles", (err, results) => { addRole(results) })
-  function addRole(value) {
-    for (let i = 0; i < value.length; i++) {
-      Role.push({
+  let role = []
+  sql.query("select * from roles", (err, res) => { addRole(res) })
+  function addRole(res) {
+    for (let i = 0; i < res.length; i++) {
+      role.push({
         name: value[i]["title"],
         value: value[i]["id"]
       })
@@ -285,11 +285,11 @@ function addEmployee() {
   }
   newEmployee()
     .then((data) => {
-      sql.query(`INSERT INTO employees(first_name, last_name, role_id, manager_id) VALUES("${data.firstName}","${data.lastName}","${data.deptChoice}","${data.manager}")`,
+      sql.query(`INSERT INTO employee(first_name, last_name, role_id, manager_id) VALUES("${data.firstName}","${data.lastName}","${data.deptChoice}","${data.manager}")`,
         (err, results) => { console.log("Employee Added") })
     })
     .then((data) => {
-      sql.query(`SELECT employees.id,first_name,last_name,title,department,salary,employees.manager_id FROM employees INNER JOIN roles ON employees.role_id = roles.id INNER JOIN department ON roles.department_id = department.id;`,
+      sql.query(`SELECT id,first_name,last_name,title,department,salary,manager_id FROM employee INNER JOIN roles ON employee.role_id = roles.id INNER JOIN department ON roles.department_id = department.id;`,
         (err, results) => { console.log(consoleTable.getTable(results)) })
     })
     .then((data) => {
@@ -301,7 +301,7 @@ function addEmployee() {
 
 function updateEmployeeRole() {
   let updatedEmployeeRole = []
-  sql.query("SELECT * FROM employees", (err, results) => { updateEmployeesRole(results) })
+  sql.query("SELECT * FROM employee", (err, results) => { updateEmployeesRole(results) })
   function updateEmployeesRole(value) {
     for (let l = 0; l < value.length; l++) {
       addedEmployees2.push({
@@ -324,11 +324,6 @@ function updateEmployeeRole() {
   const newEmployeeUpdate = () => {
     return inquirer.prompt([
       {
-        type: "input",
-        name: "test",
-        message: "Changes are permanent, press enter to continue",
-      },
-      {
         type: "list",
         name: "chosenEmployee",
         message: "Please select an employee to change their role:",
@@ -344,11 +339,11 @@ function updateEmployeeRole() {
   }
   newEmployeeUpdate()
     .then((data) => {
-      sql.query(`UPDATE employees SET role_id = ${data.updatedRole} WHERE id =${data.chosenEmployee}`,
+      sql.query(`UPDATE employee SET role_id = ${data.updatedRole} WHERE id =${data.chosenEmployee}`,
         (err, results) => { console.log("Employee Updated") })
     })
     .then((data) => {
-      sql.query(`SELECT employees.id,first_name,last_name,title,department,salary,employees.manager_id FROM employees INNER JOIN roles ON employees.role_id = roles.id INNER JOIN department ON roles.department_id = department.id;`,
+      sql.query(`SELECT id,first_name,last_name,title,department,salary,manager_id FROM employee INNER JOIN roles ON employee.role_id = roles.id INNER JOIN department ON roles.department_id = department.id;`,
         (err, results) => { console.log(consoleTable.getTable(results)) })
     })
     .then((data) => {
@@ -360,7 +355,7 @@ function updateEmployeeRole() {
 
 function updateEmployeeManager() {
   let addedEmployees2 = []
-  sql.query("SELECT * FROM employees", (err, results) => { updateaddedEmployees(results) })
+  sql.query("SELECT * FROM employee", (err, results) => { updateaddedEmployees(results) })
   function updateaddedEmployees(value) {
     for (let l = 0; l < value.length; l++) {
       addedEmployees2.push({
@@ -383,11 +378,6 @@ function updateEmployeeManager() {
   const newEmployeeUpdate = () => {
     return inquirer.prompt([
       {
-        type: "input",
-        name: "test",
-        message: "Changes are permanent, press enter to continue",
-      },
-      {
         type: "list",
         name: "chosenEmployee",
         message: "Please select an employee to change their role:",
@@ -403,11 +393,11 @@ function updateEmployeeManager() {
   }
   newEmployeeUpdate()
     .then((data) => {
-      sql.query(`UPDATE employees SET role_id = ${data.updatedRole} WHERE id =${data.chosenEmployee}`,
+      sql.query(`UPDATE employee SET role_id = ${data.updatedRole} WHERE id =${data.chosenEmployee}`,
         (err, results) => { console.log("Employee Updated") })
     })
     .then((data) => {
-      sql.query(`SELECT employees.id,first_name,last_name,title,department,salary,employees.manager_id FROM employees INNER JOIN roles ON employees.role_id = roles.id INNER JOIN department ON roles.department_id = department.id;`,
+      sql.query(`SELECT id,first_name,last_name,title,department,salary,manager_id FROM employee INNER JOIN roles ON employee.role_id = roles.id INNER JOIN department ON roles.department_id = department.id;`,
         (err, results) => { console.log(consoleTable.getTable(results)) })
     })
     .then((data) => {
@@ -422,14 +412,14 @@ function deleteDepartment() {
     return inquirer.prompt([
       {
         type: "input",
-        name: "deptName",
+        name: "departmentName",
         message: "Please enter a new Department name to add:"
       }
     ])
   }
   deletedDepartment()
     .then((data) => {
-      sql.query(`DROP IF EXISTS department(department) VALUES("${data.deptName}")`, (err, results) => { console.log("Department Added") })
+      sql.query(`DROP IF EXISTS department VALUES("${data.departmentName}")`, (err, results) => { console.log("Department Added") })
     })
     .then((data) => {
       sql.query(`SELECT *FROM department`, (err, results) => { console.log(consoleTable.getTable(results)) })
@@ -490,7 +480,7 @@ function deleteRole() {
 
 function deleteEmployee() {
   let addedEmployees = []
-  sql.query("select * from employees", (err, results) => {
+  sql.query("select * from employee", (err, results) => {
     if (err) { console.log(err) }
     addedEmployee(results)
   })
@@ -541,7 +531,7 @@ function deleteEmployee() {
   }
   deletedEmployee()
     .then((data) => {
-      sql.query(`INSERT INTO employees(first_name, last_name, role_id, manager_id) VALUES("${data.firstName}","${data.lastName}","${data.deptChoice}","${data.managerChoice}")`,
+      sql.query(`INSERT INTO employee(first_name, last_name, role_id, manager_id) VALUES("${data.firstName}","${data.lastName}","${data.deptChoice}","${data.managerChoice}")`,
         (err, results) => { console.log("Employee Added") })
     })
     .then((data) => {
