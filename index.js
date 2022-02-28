@@ -247,11 +247,11 @@ function addEmployee() {
     }
   }
 
-  let rtd = []
-  sql.query("select * from roles", (err, results) => { addRTd(results) })
-  function addRTd(value) {
+  let Role = []
+  sql.query("select * from roles", (err, results) => { addRole(results) })
+  function addRole(value) {
     for (let i = 0; i < value.length; i++) {
-      rtd.push({
+      Role.push({
         name: value[i]["title"],
         value: value[i]["id"]
       })
@@ -273,7 +273,7 @@ function addEmployee() {
         type: "list",
         name: "deptChoice",
         message: "Please select a roll:",
-        choices: rtd
+        choices: Role
       },
       {
         type: "list",
@@ -300,9 +300,9 @@ function addEmployee() {
 }
 
 function updateEmployeeRole() {
-  let addedEmployees2 = []
-  sql.query("SELECT * FROM employees", (err, results) => { updateaddedEmployees(results) })
-  function updateaddedEmployees(value) {
+  let updatedEmployeeRole = []
+  sql.query("SELECT * FROM employees", (err, results) => { updateEmployeesRole(results) })
+  function updateEmployeesRole(value) {
     for (let l = 0; l < value.length; l++) {
       addedEmployees2.push({
         name: value[l]["first_name"],
@@ -311,11 +311,11 @@ function updateEmployeeRole() {
     }
   }
 
-  let rtd2 = []
-  sql.query("SELECT * FROM roles", (err, results) => { updateRTd(results) })
-  function updateRTd(value) {
+  let role2 = []
+  sql.query("SELECT * FROM roles", (err, results) => { updateRole(results) })
+  function updateRole(value) {
     for (let n = 0; n < value.length; n++) {
-      rtd2.push({
+      role2.push({
         name: value[n]["title"],
         value: value[n]["id"]
       })
@@ -332,13 +332,13 @@ function updateEmployeeRole() {
         type: "list",
         name: "chosenEmployee",
         message: "Please select an employee to change their role:",
-        choices: addedEmployees2
+        choices: updatedEmployeeRole
       },
       {
         type: "list",
         name: "updatedRole",
         message: "Please select a new role:",
-        choices: rtd2
+        choices: role2
       }
     ])
   }
@@ -370,11 +370,11 @@ function updateEmployeeManager() {
     }
   }
 
-  let rtd2 = []
-  sql.query("SELECT * FROM roles", (err, results) => { updateRTd(results) })
-  function updateRTd(value) {
+  let role2 = []
+  sql.query("SELECT * FROM roles", (err, results) => { updateRole(results) })
+  function updateRole(value) {
     for (let n = 0; n < value.length; n++) {
-      rtd2.push({
+      role2.push({
         name: value[n]["title"],
         value: value[n]["id"]
       })
@@ -397,7 +397,7 @@ function updateEmployeeManager() {
         type: "list",
         name: "updatedRole",
         message: "Please select a new role:",
-        choices: rtd2
+        choices: role2
       }
     ])
   }
@@ -467,7 +467,7 @@ function deleteRole() {
       {
         type: "list",
         name: "deptChoice",
-        message: "Please select of the following:",
+        message: "Please select a department:",
         choices: deletedRolesList
       }
     ])
@@ -503,11 +503,11 @@ function deleteEmployee() {
     }
   }
 
-  let rtd = []
-  sql.query("select * from roles", (err, results) => { addRTd(results) })
-  function addRTd(value) {
+  let role = []
+  sql.query("select * from roles", (err, results) => { addRoles(results) })
+  function addRoles(value) {
     for (let i = 0; i < value.length; i++) {
-      rtd.push({
+      role.push({
         name: value[i]["title"],
         value: value[i]["id"]
       })
