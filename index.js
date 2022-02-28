@@ -161,7 +161,7 @@ function viewEmployeesByManager() {
 
 function viewEmployeesByDepartment() {
   const showEmployeesbyDepartment = () => {
-    sql.query("SELECT id,first_name,last_name,title,department,salary,manager_id FROM employee INNER JOIN roles ON employee.role_id = roles.id INNER JOIN department ON roles.department_id = department.id;", (err, results) => { console.log(consoleTable.getTable(results)) });
+    sql.query(`SELECT * FROM employee INNER JOIN roles ON employee.role_id = roles.id INNER JOIN department ON roles.department_id = department.id WHERE department.id = ${data.departmentName}`, (err, results) => { console.log(consoleTable.getTable(results)) });
     setTimeout(() => {
       anotherQuery();
     }, 100);
@@ -405,7 +405,7 @@ function updateEmployeeManager() {
         (err, results) => { console.log("Employee Updated") })
     })
     .then((data) => {
-      sql.query(`SELECT id,first_name,last_name,title,department,salary,manager_id FROM employee INNER JOIN roles ON employee.role_id = roles.id INNER JOIN department ON roles.department_id = department.id;`,
+      sql.query(`SELECT * FROM employee INNER JOIN roles ON employee.role_id = roles.id;`,
         (err, results) => { console.log(consoleTable.getTable(results)) })
     })
     .then((data) => {
@@ -536,12 +536,11 @@ function viewBudget() {
   })
   const budget = () => {
     let departmentBudget = []
-    sql.query("select * from employee", (err, results) => { departmentBudgets(results) })
+    sql.query("select * from employee INNER JOIN roles ON roles.id = employee.role_id", (err, results) => { departmentBudgets(results) })
     function departmentBudgets(value) {
       for (let i = 0; i < value.length; i++) {
         departmentBudget.push({
-          name: value[i]["employee"],
-          value: value[i]["salary"]
+          value: value[i]["salary"] 
         })
       }
     }
