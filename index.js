@@ -118,7 +118,7 @@ function viewdepartment() {
 
 function viewRoles() {
   const showRole = () => {
-    sql.query("SELECT id, title, salary, department_id FROM roles;",
+    sql.query("SELECT * FROM roles;",
      (err, results) => { console.log(consoleTable.getTable(results)) });
     setTimeout(() => {
       anotherQuery();
@@ -139,14 +139,23 @@ function viewEmployees() {
 }
 
 function viewEmployeesByManager() {
-  const showEmployeesbyManager = () => {
-    sql.query("SELECT * FROM employee ON employee.manager_id;",
+  inquirer.prompt([
+    {
+      type: "input",
+      name: "managerID",
+      message: "Please enter a manager to view their employees:"
+    }
+  ]).then((data) => {
+    const showEmployeesbyManager = () => {
+    sql.query(`SELECT * FROM employee GROUP BY manager_id HAVING manager_id = ${data.managerID};`,
      (err, results) => { console.log(consoleTable.getTable(results)) });
     setTimeout(() => {
       anotherQuery();
     }, 100);
   }
-  showEmployeesbyManager()
+  showEmployeesbyManager();
+})
+  
 }
 
 
