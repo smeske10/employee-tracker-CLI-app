@@ -427,10 +427,10 @@ function deleteDepartment() {
   }
   deletedDepartment()
     .then((data) => {
-      sql.query(`DROP IF EXISTS department VALUES("${data.departmentName}")`, (err, results) => { console.log("Department Added") })
+      sql.query(`DELETE department VALUES("${data.departmentName}")`, (err, results) => { console.log("Department Added") })
     })
     .then((data) => {
-      sql.query(`SELECT *FROM department`, (err, results) => { console.log(consoleTable.getTable(results)) })
+      sql.query(`SELECT * FROM department`, (err, results) => { console.log(consoleTable.getTable(results)) })
     })
     .then((data) => {
       setTimeout(() => {
@@ -477,63 +477,37 @@ function deleteRole() {
 }
 
 function deleteEmployee() {
-  let addedEmployees = []
-  sql.query("select * from employee", (err, results) => {
+  let employees = []
+  sql.query("select last_name from employee", (err, results) => {
     if (err) { console.log(err) }
-    addedEmployee(results)
+    deletedEmployee(results)
   })
-  function addedEmployee(value) {
+  function deletedEmployee(value) {
     for (let l = 0; l < value.length; l++) {
-      addedEmployees.push({
-        name: value[l]["first_name"],
-        value: value[l]["id"]
+      employees.push({
+        name: value[l]["last_name"],
+        value: value[l]["last_name"]
       })
     }
   }
 
-  let role = []
-  sql.query("select * from roles", (err, results) => { addRoles(results) })
-  function addRoles(value) {
-    for (let i = 0; i < value.length; i++) {
-      role.push({
-        name: value[i]["title"],
-        value: value[i]["id"]
-      })
-    }
-  }
   const deletedEmployee = () => {
     return inquirer.prompt([
       {
         type: "input",
-        name: "firstName",
-        message: "Please enter the new employee's first name."
-      },
-      {
-        type: "input",
         name: "lastName",
-        message: "Please enter the new employee's last name."
+        message: "Please enter the employee's name you would like to delete.",
+        choices: employees
       },
-      {
-        type: "list",
-        name: "deptChoice",
-        message: "Please select a roll:",
-        choices: rtd
-      },
-      {
-        type: "list",
-        name: "manager",
-        message: "Please select a manager:",
-        choices: addedEmployees
-      }
     ])
   }
   deletedEmployee()
     .then((data) => {
-      sql.query(`INSERT INTO employee(first_name, last_name, role_id, manager_id) VALUES("${data.firstName}","${data.lastName}","${data.deptChoice}","${data.managerChoice}")`,
-        (err, results) => { console.log("Employee Added") })
+      sql.query(`DELETE ${data.lastName} FROM employee`,
+        (err, results) => { console.log(`${data.lastName} Deleted`) })
     })
     .then((data) => {
-      sql.query(`SELECT employees.id,first_name,last_name,title,department,salary,employees.manager_id FROM employees INNER JOIN roles ON employees.role_id = roles.id INNER JOIN department ON roles.department_id = department.id;`,
+      sql.query(`SELECT id,first_name,last_name,title,department,salary,manager_id FROM employee INNER JOIN roles ON employee.role_id = roles.id INNER JOIN department ON roles.department_id = department.id;`,
         (err, results) => { console.log(consoleTable.getTable(results)) })
     })
     .then((data) => {
@@ -544,6 +518,22 @@ function deleteEmployee() {
 }
 
 function viewBudget() {
+  const department = () => {
+
+  return inquirer.prompt([
+    {
+      type: "input",
+      name: "department",
+      message: "Please select the Department Budget name you would like to view.",
+      choices: employees
+    },
+  ])
+}
+  department()
+  .then((data) => {
+    sql.query(`SELECT salary FROM role INNER JOIN department ON department.id = role.department_id WHERE department = ${data.department}`,
+      (err, results) => { console.log(`${data.lastName} Deleted`) })
+  })
   const budget = () => {
     let departmentBudget = []
     sql.query("select * from employee", (err, results) => { departmentBudgets(results) })
