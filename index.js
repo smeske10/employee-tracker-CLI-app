@@ -96,11 +96,10 @@ function anotherQuery() {
           'No'
         ]
       }
-    ]).then(function (res) {
-      switch (res.select) {
-        case "Yes":
+    ]).then(function (anotherQuery) {
+      if (anotherQuery.select === "Yes") {
           inquire();
-        case "No":
+      } else {
           process.exit()
       }
     })
@@ -141,7 +140,7 @@ function viewEmployees() {
 
 function viewEmployeesByManager() {
   const showEmployeesbyManager = () => {
-    sql.query("SELECT * FROM employee LEFT JOIN roles ON employee.role_id = role.id LEFT JOIN department ON ;",
+    sql.query("SELECT * FROM employee ON employee.manager_id;",
      (err, results) => { console.log(consoleTable.getTable(results)) });
     setTimeout(() => {
       anotherQuery();
@@ -153,7 +152,7 @@ function viewEmployeesByManager() {
 
 function viewEmployeesByDepartment() {
   const showEmployeesbyDepartment = () => {
-    sql.query("SELECT employees.id,first_name,last_name,title,department,salary,employees.manager_id FROM employees INNER JOIN roles ON employees.role_id = roles.id INNER JOIN department ON roles.department_id = department.id;", (err, results) => { console.log(consoleTable.getTable(results)) });
+    sql.query("SELECT id,first_name,last_name,title,department,salary,manager_id FROM employee INNER JOIN roles ON employee.role_id = roles.id INNER JOIN department ON roles.department_id = department.id;", (err, results) => { console.log(consoleTable.getTable(results)) });
     setTimeout(() => {
       anotherQuery();
     }, 100);
@@ -304,7 +303,7 @@ function updateEmployeeRole() {
   sql.query("SELECT * FROM employee", (err, results) => { updateEmployeesRole(results) })
   function updateEmployeesRole(value) {
     for (let l = 0; l < value.length; l++) {
-      addedEmployees2.push({
+      updatedEmployeeRole.push({
         name: value[l]["first_name"],
         value: value[l]["id"]
       })
@@ -434,11 +433,11 @@ function deleteDepartment() {
 function deleteRole() {
   const deletedRole = () => {
     let deletedRolesList = []
-    sql.query("select * from department", (err, results) => { deletedRoles(results) })
+    sql.query("select * from roles", (err, res) => { deletedRoles(res) })
     function deletedRoles(value) {
       for (let i = 0; i < value.length; i++) {
         deletedRolesList.push({
-          name: value[i]["department"],
+          name: value[i]["title"],
           value: value[i]["id"]
         })
       }
@@ -447,17 +446,7 @@ function deleteRole() {
       {
         type: "input",
         name: "roleName",
-        message: "Please enter a new role to add:"
-      },
-      {
-        type: "input",
-        name: "salary",
-        message: "Please enter this role's salary:"
-      },
-      {
-        type: "list",
-        name: "deptChoice",
-        message: "Please select a department:",
+        message: "Which role would you like to delete?",
         choices: deletedRolesList
       }
     ])
@@ -465,11 +454,11 @@ function deleteRole() {
   deletedRole()
     .then((data) => {
       sql.query(`INSERT INTO roles(title, salary, department_id) VALUES("${(data.roleName)}","${data.salary}","${data.deptChoice}")`, (err, results) => {
-        if (err) { throw err }
+        if (err) { return err }
       })
     })
     .then((data) => {
-      sql.query(`SELECT *FROM roles`, (err, results) => { console.log(consoleTable.getTable(results)) })
+      sql.query(`SELECT * FROM roles`, (err, results) => { console.log(consoleTable.getTable(results)) })
     })
     .then((data) => {
       setTimeout(() => {
@@ -547,13 +536,13 @@ function deleteEmployee() {
 
 function viewBudget() {
   const budget = () => {
-    let deletedRolesList = []
-    sql.query("select * from department", (err, results) => { deletedRoles(results) })
-    function deletedRoles(value) {
+    let departmentBudget = []
+    sql.query("select * from employee", (err, results) => { departmentBudgets(results) })
+    function departmentBudgets(value) {
       for (let i = 0; i < value.length; i++) {
-        deletedRolesList.push({
-          name: value[i]["department"],
-          value: value[i]["id"]
+        departmentBudget.push({
+          name: value[i]["employee"],
+          value: value[i]["salary"]
         })
       }
     }
